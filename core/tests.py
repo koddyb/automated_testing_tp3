@@ -32,6 +32,11 @@ def required_name_form(db):
 def test_mandatory_field_error__ok(
     selenium, live_server, required_name_form
 ):
+    """
+    Given a mandatory question "What is your name?"
+    When question is replied
+    Then no error is shown
+    """
     # ── Given ──────────────────────────────────────────────────────────
     selenium.get(f"{live_server.url}/forms/{required_name_form.slug}/")
 
@@ -51,9 +56,14 @@ def test_mandatory_field_error__ok(
     assert not error.is_displayed()
 
 
-def test_mandatory_field_error_shown_on_blur(
+def test_mandatory_field_error_shown(
     selenium, live_server, required_name_form
 ):
+    """
+    Given a mandatory question "What is your name?"
+    When question is not replied
+    Then error message is shown
+    """
     # ── Given ──────────────────────────────────────────────────────────
     selenium.get(f"{live_server.url}/forms/{required_name_form.slug}/")
 
@@ -65,6 +75,7 @@ def test_mandatory_field_error_shown_on_blur(
     )
     error = selenium.find_element(By.CSS_SELECTOR, ".error-message")
 
+    # Error is not displayed before user clicked the field
     assert not error.is_displayed()
 
     # ── When ───────────────────────────────────────────────────────────
