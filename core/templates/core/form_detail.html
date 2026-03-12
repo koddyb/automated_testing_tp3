@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -158,36 +159,9 @@
     </form>
   </div>
 
+  <script src="{% static 'core/js/validation.js' %}"></script>
   <script>
-    // Client-side: show "Mandatory field" on blur when field is empty and required
-    document.querySelectorAll('[data-required="true"]').forEach(function(field) {
-      field.addEventListener('blur', function() {
-        var errorEl = document.getElementById('error_' + field.id.replace('question_', 'error_').replace('question_', ''));
-        // Re-derive the error span id
-        var fieldId = field.id; // e.g. "question_3"
-        var errorId = 'error_' + fieldId.split('_')[1];
-        var errorSpan = document.getElementById(errorId);
-
-        if (field.value.trim() === '') {
-          field.classList.add('field-error');
-          if (errorSpan) errorSpan.classList.add('visible');
-        } else {
-          field.classList.remove('field-error');
-          if (errorSpan) errorSpan.classList.remove('visible');
-        }
-      });
-
-      // Clear error on input
-      field.addEventListener('input', function() {
-        var fieldId = field.id;
-        var errorId = 'error_' + fieldId.split('_')[1];
-        var errorSpan = document.getElementById(errorId);
-        if (field.value.trim() !== '') {
-          field.classList.remove('field-error');
-          if (errorSpan) errorSpan.classList.remove('visible');
-        }
-      });
-    });
+    document.addEventListener("DOMContentLoaded", initRequiredFieldValidation);
   </script>
 </body>
 </html>
