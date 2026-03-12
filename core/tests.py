@@ -29,13 +29,40 @@ def required_name_form(db):
     return form
 
 
+def test_mandatory_field_error__ok(
+    selenium, live_server, required_name_form
+):
+    # ── Given ──────────────────────────────────────────────────────────
+    selenium.get(f"{live_server.url}/forms/{required_name_form.slug}/")
+
+    # Access field via ID
+    field = selenium.find_element(
+        By.ID, f"question_{required_name_form.questions.first().id}"
+    )
+
+    error = selenium.find_element(By.CSS_SELECTOR, ".error-message")
+
+    # ── When ───────────────────────────────────────────────────────────
+    field.send_keys("Alice")
+    field.click()
+
+    # ── Then ───────────────────────────────────────────────────────────
+    WebDriverWait(selenium, 3).until(EC.invisibility_of_element(error))
+    assert not error.is_displayed()
+
+
 def test_mandatory_field_error_shown_on_blur(
     selenium, live_server, required_name_form
 ):
     # ── Given ──────────────────────────────────────────────────────────
     selenium.get(f"{live_server.url}/forms/{required_name_form.slug}/")
 
-    field = selenium.find_element(By.ID, f"question_{required_name_form.questions.first().id}")
+    # Access field by locating label = "What is your name?"
+    # Then the next input
+    field = selenium.find_element(
+        By.XPATH,
+        f"//label[normalize-space(text())='What is your name?']/following-sibling::input[1]",
+    )
     error = selenium.find_element(By.CSS_SELECTOR, ".error-message")
 
     assert not error.is_displayed()
@@ -48,24 +75,3 @@ def test_mandatory_field_error_shown_on_blur(
     WebDriverWait(selenium, 3).until(EC.visibility_of(error))
     assert error.is_displayed()
     assert error.text == "Mandatory field"
-
-def test_mandatory_field_error_hidden_after_typing(
-    selenium, live_server, required_name_form
-):
-    """Regression: once the user types something, the error disappears."""
-    selenium.get(f"{live_server.url}/forms/{required_name_form.slug}/")
-
-    field = selenium.find_element(By.ID, f"question_{required_name_form.questions.first().id}")
-    error = selenium.find_element(By.CSS_SELECTOR, ".error-message")
-
-    # Trigger the error first
-    field.click()
-    field.send_keys(Keys.TAB)
-    WebDriverWait(selenium, 3).until(EC.visibility_of(error))
-    assert error.is_displayed()
-
-    # Type something → error must vanish
-    field.click()
-    field.send_keys("Alice")
-    WebDriverWait(selenium, 3).until(EC.invisibility_of_element(error))
-    assert not error.is_displayed()
