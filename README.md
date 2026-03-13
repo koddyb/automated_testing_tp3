@@ -197,6 +197,8 @@ Changer le code "core/urls.py", "core/views.py". Créer un "core/templates/core/
 On veut créer des tests end-to-end pour nos fonctionnalités principales:
 - Qu'un.e utilisateur.trice puisse remplir un formulaire, que ses réponses soient enregistrées
 - Qu'un.e créateur.trice puisse voir les statistiques
+- Qu'un.e utilisateur.trice, avec le bon email, puisse voir un formulaire privé
+- Qu'un.e utilisateur.trice, avec le mauvaise email, ait "access denied" sur un formulaire privé
 
 Pour le test end-to-end, on veut:
 - Qu'un serveur run (sur "http://localhost:8000/")
